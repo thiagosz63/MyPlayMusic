@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class Main extends Application {
         stage.setScene(scene);
         Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/image/simboloMusical.png")));
         stage.getIcons().add(icon);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
