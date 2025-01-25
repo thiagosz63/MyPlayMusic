@@ -22,3 +22,6 @@
     -fx-scale-y: 1.1;
     -fx-fill: #ffc800;
 }
+.AnchorPane:pressed{
+    -fx-cursor: move;
+}
