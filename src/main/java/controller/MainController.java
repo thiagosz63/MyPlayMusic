@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 
 import javafx.scene.input.MouseEvent;
@@ -8,9 +9,12 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import utils.Utils;
 
 public class MainController {
 
+    private static double xOffset = 0;
+    private static double yOffset = 0;
 
     private @FXML ImageView audio;
     private @FXML Label currentTime;
@@ -21,13 +25,27 @@ public class MainController {
     private @FXML Slider volumeSelector;
 
     @FXML
-    private void minimize(MouseEvent event) {
-        ((Stage) telaAPP.getScene().getWindow()).toBack();
+    private void minimize(MouseEvent mouseEvent) {
+        Stage stage = Utils.currentStage(mouseEvent);
+        stage.setIconified(true);
     }
 
     @FXML
     private void close(MouseEvent event) {
-        System.exit(0);
+        Platform.exit();
+    }
+
+    @FXML
+    private void telaAPPDragged(MouseEvent mouseEvent) {
+        Stage stage = Utils.currentStage(mouseEvent);
+        stage.setX(mouseEvent.getScreenX() - xOffset);
+        stage.setY(mouseEvent.getScreenY() - yOffset);
+    }
+
+    @FXML
+    private void telaAppPressed(MouseEvent mouseEvent) {
+        xOffset = mouseEvent.getSceneX();
+        yOffset = mouseEvent.getSceneY();
     }
 
     public void preview(MouseEvent mouseEvent) {

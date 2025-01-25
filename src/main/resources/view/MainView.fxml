@@ -13,9 +13,9 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="telaAPP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="325.0" prefWidth="380.0" style="-fx-background-color: rgb(53,53,53);"
-            xmlns="http://javafx.com/javafx/21.0.4" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.MainController">
+            onMouseDragged="#telaAPPDragged" onMousePressed="#telaAppPressed" prefHeight="325.0" prefWidth="380.0"
+            style="-fx-background-color: rgb(53,53,53);" xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
     <children>
         <Text fill="WHITE" layoutX="341.0" layoutY="27.0" onMouseClicked="#minimize" strokeType="OUTSIDE"
               strokeWidth="0.0" styleClass="textMinimize" text="-">

@@ -3,6 +3,7 @@ module application {
     requires javafx.fxml;
     requires javafx.media;
 
+
     requires org.controlsfx.controls;
 
     exports application;
