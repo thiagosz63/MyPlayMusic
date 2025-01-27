@@ -2,16 +2,17 @@
     -fx-background-radius:7.0;
     -fx-cursor: hand;
 }
+
 .imageViewButton:hover {
     -fx-background-color: #383838;
     -fx-scale-y: 1.1;
     -fx-text-fill: white;
 }
+
 .imageViewButton:pressed {
     -fx-scale-y: 0.9;
     -fx-scale-x: 0.9;
 }
-
 
 .textClosed:hover{
     -fx-scale-y: 1.1;

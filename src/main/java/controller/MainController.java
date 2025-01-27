@@ -11,10 +11,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import utils.Utils;
 
@@ -27,6 +29,7 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
+    private @FXML ImageView btnPlay;
     private @FXML MediaView mediaView;
     private @FXML ImageView audio;
     private @FXML Label currentTime;
@@ -37,19 +40,14 @@ public class MainController implements Initializable {
     private @FXML Slider volumeSelector;
 
     private MediaPlayer mediaPlayer;
-    private List<String> musics = new ArrayList<>();
+    private List<File> musics = new ArrayList<>();
     private int currentMusicIndex;
     private double volume = 30;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         volumeSelector.setValue(volume);
-        uploadMusic();
-        formatMusicName();
         musicMoveName();
-        timeSet();
-        changeVolume();
     }
 
     private void timeSet() {
@@ -101,24 +99,22 @@ public class MainController implements Initializable {
     }
 
     private void formatMusicName() {
-        String name = musics.get(currentMusicIndex).replace("/music/", "");
+        String name = musics.get(currentMusicIndex).getName();
         musicName.setText(name);
     }
 
     private void uploadMusic() {
-        musics.add("/music/Track01.mp3");
-        musics.add("/music/Track02.mp3");
         currentMusicIndex = 0;
-        String currentMusic = musics.get(currentMusicIndex);
-        Media media = new Media(Objects.requireNonNull(getClass().getResource(currentMusic)).toExternalForm());
+        String currentMusic = musics.get(currentMusicIndex).toURI().toString();
+        Media media = new Media(currentMusic);
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
         mediaPlayer.setVolume(volume);
     }
 
     private void changeCurrentMusic() {
-        String currentMusic = musics.get(currentMusicIndex);
-        Media media = new Media(Objects.requireNonNull(getClass().getResource(currentMusic)).toExternalForm());
+        String currentMusic = musics.get(currentMusicIndex).toURI().toString();
+        Media media = new Media(currentMusic);
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
         timeSet();
@@ -129,19 +125,20 @@ public class MainController implements Initializable {
     private void changeVolume() {
         volumeSelector.valueProperty().addListener((
                         observable, oldValue, newValue) -> {
-    volume = newValue.doubleValue() / 100;
-    mediaPlayer.setVolume(volume);
+                    volume = newValue.doubleValue() / 100;
+                    mediaPlayer.setVolume(volume);
 
-    if(volume!= 0){
-        mediaPlayer.setMute(false);
-    }
-    audio.setImage(volume > 0 ? new Image(Objects.requireNonNull(getClass().getResource("/image/audioOn.png")).toExternalForm()) :
-        new Image(Objects.requireNonNull(getClass().getResource("/image/audioOff.png")).toExternalForm()));
+                    if (volume != 0) {
+                        mediaPlayer.setMute(false);
+                    }
+                    audio.setImage(volume > 0 ? new Image(Objects.requireNonNull(getClass().getResource("/image/audioOn.png")).toExternalForm()) :
+                            new Image(Objects.requireNonNull(getClass().getResource("/image/audioOff.png")).toExternalForm()));
                 }
         );
     }
-    private void checkMute(){
-        if(volume == 0){
+
+    private void checkMute() {
+        if (volume == 0) {
             mediaPlayer.setMute(true);
             mediaPlayer.setVolume(0);
         }
@@ -160,8 +157,15 @@ public class MainController implements Initializable {
 
     @FXML
     private void player() {
-        mediaPlayer.play();
-        checkMute();
+        if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
+            mediaPlayer.pause();
+            btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
+        } else {
+            mediaPlayer.play();
+            checkMute();
+            btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
+        }
+
     }
 
     @FXML
@@ -172,6 +176,8 @@ public class MainController implements Initializable {
     @FXML
     private void stop() {
         mediaPlayer.stop();
+        btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
+
     }
 
     @FXML
@@ -199,12 +205,38 @@ public class MainController implements Initializable {
         if (mediaPlayer.isMute()) {
             mediaPlayer.setMute(false);
             audio.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/audioOn.png")).toExternalForm()));
-      mediaPlayer.setVolume(volumeSelector.getValue());
-      volume = volumeSelector.getValue();
+            mediaPlayer.setVolume(volumeSelector.getValue());
+            volume = volumeSelector.getValue();
         } else {
             mediaPlayer.setMute(true);
             audio.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/audioOff.png")).toExternalForm()));
             volume = 0;
+        }
+    }
+
+    @FXML
+    private void open(MouseEvent mouseEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("MP3", "*.mp3"),
+                new FileChooser.ExtensionFilter("MP4", "*.mp4"),
+                new FileChooser.ExtensionFilter("All Files", "*.*"));
+        List<File> file = fileChooser.showOpenMultipleDialog(Utils.currentStage(mouseEvent));
+
+        if (file != null) {
+
+            if (mediaPlayer != null) {
+                stop();
+                musics.clear();
+            }
+            musics.addAll(file);
+            uploadMusic();
+            formatMusicName();
+            musicMoveName();
+            timeSet();
+            changeVolume();
+            player();
         }
     }
 }
