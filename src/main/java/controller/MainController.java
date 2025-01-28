@@ -81,7 +81,7 @@ public class MainController implements Initializable {
                     }
                 }
         );
-        mediaPlayer.setOnEndOfMedia(this::next);
+        mediaPlayer.setOnEndOfMedia(this::changeMusic);
     }
 
     private void changeMusicTempo(double position) {
@@ -110,6 +110,10 @@ public class MainController implements Initializable {
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
         mediaPlayer.setVolume(volume);
+
+        formatMusicName();
+        musicMoveName();
+        timeSet();
     }
 
     private void changeCurrentMusic() {
@@ -120,6 +124,17 @@ public class MainController implements Initializable {
         timeSet();
         formatMusicName();
         player();
+    }
+
+    private void changeMusic() {
+
+        stop();
+        currentMusicIndex++;
+        if (currentMusicIndex >= musics.size()) {
+            uploadMusic();
+        } else {
+            changeCurrentMusic();
+        }
     }
 
     private void changeVolume() {
@@ -168,7 +183,6 @@ public class MainController implements Initializable {
 
     }
 
-    @FXML
     private void pause(MouseEvent mouseEvent) {
         mediaPlayer.pause();
     }
@@ -177,7 +191,6 @@ public class MainController implements Initializable {
     private void stop() {
         mediaPlayer.stop();
         btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
-
     }
 
     @FXML
@@ -232,9 +245,6 @@ public class MainController implements Initializable {
             }
             musics.addAll(file);
             uploadMusic();
-            formatMusicName();
-            musicMoveName();
-            timeSet();
             changeVolume();
             player();
         }
