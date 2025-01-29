@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -15,7 +16,7 @@
 
 <AnchorPane fx:id="telaAPP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="325.0" prefWidth="380.0" style="-fx-background-color: rgb(53,53,53);" styleClass="AnchorPane"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/21.0.4" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.MainController">
     <children>
         <Text fill="WHITE" layoutX="341.0" layoutY="27.0" onMouseClicked="#minimize" strokeType="OUTSIDE"
@@ -36,7 +37,7 @@
                 <Image url="@../image/simboloMusical.png"/>
             </image>
         </ImageView>
-        <HBox alignment="BOTTOM_LEFT" layoutX="14.0" layoutY="260.0" prefHeight="42.0" prefWidth="154.0" spacing="1.0"
+        <HBox alignment="BOTTOM_LEFT" layoutX="14.0" layoutY="260.0" prefHeight="42.0" prefWidth="192.0" spacing="1.0"
               AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="14.0">
             <children>
                 <ImageView fitHeight="27.0" fitWidth="30.0" onMouseClicked="#preview" pickOnBounds="true"
@@ -66,6 +67,13 @@
                         <Image url="@../image/proxima.png"/>
                     </image>
                 </ImageView>
+                <ImageView fitHeight="27.0" fitWidth="30.0" onMouseClicked="#reload" pickOnBounds="true"
+                           preserveRatio="true" styleClass="imageViewButton">
+                    <image>
+                        <Image url="@../image/reload.png"/>
+                    </image>
+                </ImageView>
+                <TextField fx:id="txtReload" text="0" visible="false"/>
             </children>
         </HBox>
         <HBox alignment="BOTTOM_LEFT" layoutX="212.0" layoutY="260.0" prefHeight="42.0" prefWidth="154.0" spacing="5.0"

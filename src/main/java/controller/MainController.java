@@ -5,9 +5,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
-import javafx.stage.Window;
 import javafx.util.Duration;
 import utils.Utils;
 
@@ -29,20 +28,21 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
+    private @FXML TextField txtReload;
     private @FXML ImageView btnPlay;
     private @FXML MediaView mediaView;
     private @FXML ImageView audio;
     private @FXML Label currentTime;
     private @FXML Label musicName;
     private @FXML Slider musicTime;
-    private @FXML AnchorPane telaAPP;
     private @FXML Label timeTotal;
     private @FXML Slider volumeSelector;
 
     private MediaPlayer mediaPlayer;
-    private List<File> musics = new ArrayList<>();
+    private final List<File> musics = new ArrayList<>();
     private int currentMusicIndex;
     private double volume = 30;
+    private int control;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -81,7 +81,12 @@ public class MainController implements Initializable {
                     }
                 }
         );
-        mediaPlayer.setOnEndOfMedia(this::changeMusic);
+        if (control == (Utils.tryParseToInt(txtReload.getText()) * musics.size())) {
+            mediaPlayer.setOnEndOfMedia(this::changeMusic);
+        } else {
+            control++;
+            mediaPlayer.setOnEndOfMedia(this::next);
+        }
     }
 
     private void changeMusicTempo(double position) {
@@ -123,7 +128,8 @@ public class MainController implements Initializable {
         mediaView.setMediaPlayer(mediaPlayer);
         timeSet();
         formatMusicName();
-        player();
+        btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
+        mediaPlayer.play();
     }
 
     private void changeMusic() {
@@ -132,6 +138,7 @@ public class MainController implements Initializable {
         currentMusicIndex++;
         if (currentMusicIndex >= musics.size()) {
             uploadMusic();
+            control = 0;
         } else {
             changeCurrentMusic();
         }
@@ -166,7 +173,7 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void close(MouseEvent event) {
+    private void close() {
         Platform.exit();
     }
 
@@ -175,16 +182,18 @@ public class MainController implements Initializable {
         if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
             mediaPlayer.pause();
             btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
-        } else {
+        } else if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)) {
             mediaPlayer.play();
             checkMute();
             btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
+        } else {
+            uploadMusic();
+            mediaPlayer.play();
+            checkMute();
+            btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
+
         }
 
-    }
-
-    private void pause(MouseEvent mouseEvent) {
-        mediaPlayer.pause();
     }
 
     @FXML
@@ -248,5 +257,9 @@ public class MainController implements Initializable {
             changeVolume();
             player();
         }
+    }
+
+    public void reload() {
+        txtReload.setVisible(!txtReload.isVisible());
     }
 }
