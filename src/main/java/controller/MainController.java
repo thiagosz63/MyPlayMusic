@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -28,14 +30,22 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-    private @FXML TextField txtReload;
-    private @FXML ImageView btnPlay;
-    private @FXML MediaView mediaView;
+    private @FXML ImageView imgGifReload;
+    private @FXML Label labelCounterReload;
     private @FXML ImageView audio;
+    private @FXML ImageView btnNext;
+    private @FXML ImageView btnOpen;
+    private @FXML ImageView btnPlay;
+    private @FXML ImageView btnPreview;
+    private @FXML ImageView btnReload;
+    private @FXML ImageView btnStop;
     private @FXML Label currentTime;
+    private @FXML MediaView mediaView;
     private @FXML Label musicName;
     private @FXML Slider musicTime;
+    private @FXML AnchorPane telaAPP;
     private @FXML Label timeTotal;
+    private @FXML TextField txtReload;
     private @FXML Slider volumeSelector;
 
     private MediaPlayer mediaPlayer;
@@ -48,6 +58,7 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         volumeSelector.setValue(volume);
         musicMoveName();
+        legend();
     }
 
     private void timeSet() {
@@ -81,12 +92,20 @@ public class MainController implements Initializable {
                     }
                 }
         );
-        if (control == (Utils.tryParseToInt(txtReload.getText()) * musics.size())) {
+
+        if (musics.size() > 1) {
+            labelCounterReload.setText((control / musics.size()) + " Reload");
+        } else {
+            labelCounterReload.setText((control) + " Reload");
+        }
+
+        if (control >= (Utils.tryParseToInt(txtReload.getText()) * musics.size())) {
             mediaPlayer.setOnEndOfMedia(this::changeMusic);
         } else {
             control++;
             mediaPlayer.setOnEndOfMedia(this::next);
         }
+
     }
 
     private void changeMusicTempo(double position) {
@@ -138,7 +157,7 @@ public class MainController implements Initializable {
         currentMusicIndex++;
         if (currentMusicIndex >= musics.size()) {
             uploadMusic();
-            control = 0;
+            control = 1;
         } else {
             changeCurrentMusic();
         }
@@ -166,6 +185,17 @@ public class MainController implements Initializable {
         }
     }
 
+    private void legend() {
+        Tooltip.install(btnPlay, new Tooltip("Play & Pause"));
+        Tooltip.install(btnPreview, new Tooltip("Preview"));
+        Tooltip.install(btnStop, new Tooltip("Stop"));
+        Tooltip.install(btnNext, new Tooltip("Next"));
+        Tooltip.install(btnOpen, new Tooltip("Open"));
+        Tooltip.install(audio, new Tooltip("Mute"));
+        Tooltip.install(btnReload, new Tooltip("Reload"));
+
+    }
+
     @FXML
     private void minimize(MouseEvent mouseEvent) {
         Stage stage = Utils.currentStage(mouseEvent);
@@ -179,72 +209,94 @@ public class MainController implements Initializable {
 
     @FXML
     private void player() {
-        if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
-            mediaPlayer.pause();
-            btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
-        } else if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)) {
-            mediaPlayer.play();
-            checkMute();
-            btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
+        if (musics.isEmpty()) {
+            open();
         } else {
-            uploadMusic();
-            mediaPlayer.play();
-            checkMute();
-            btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
+            if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
+                mediaPlayer.pause();
+                btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
+            } else if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)) {
+                mediaPlayer.play();
+                checkMute();
+                btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
+            } else {
+                uploadMusic();
+                mediaPlayer.play();
+                checkMute();
+                btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/pause.png")).toExternalForm()));
 
+            }
         }
 
     }
 
     @FXML
     private void stop() {
-        mediaPlayer.stop();
-        btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
+        if (musics.isEmpty()) {
+            open();
+        } else {
+            mediaPlayer.stop();
+            btnPlay.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/play.png")).toExternalForm()));
+        }
     }
 
     @FXML
     private void preview() {
-        stop();
-        currentMusicIndex--;
-        if (currentMusicIndex < 0) {
-            currentMusicIndex = musics.size() - 1;
+        if (musics.isEmpty()) {
+            open();
+        } else {
+            stop();
+            currentMusicIndex--;
+            if (currentMusicIndex < 0) {
+                currentMusicIndex = musics.size() - 1;
+            }
+            changeCurrentMusic();
         }
-        changeCurrentMusic();
     }
 
     @FXML
     private void next() {
-        stop();
-        currentMusicIndex++;
-        if (currentMusicIndex >= musics.size()) {
-            currentMusicIndex = 0;
+        if (musics.isEmpty()) {
+            open();
+        } else {
+            stop();
+            currentMusicIndex++;
+            if (currentMusicIndex >= musics.size()) {
+                currentMusicIndex = 0;
+            }
+            changeCurrentMusic();
         }
-        changeCurrentMusic();
     }
 
     @FXML
     private void mute() {
-        if (mediaPlayer.isMute()) {
-            mediaPlayer.setMute(false);
-            audio.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/audioOn.png")).toExternalForm()));
-            mediaPlayer.setVolume(volumeSelector.getValue());
-            volume = volumeSelector.getValue();
+        if (musics.isEmpty()) {
+            open();
         } else {
-            mediaPlayer.setMute(true);
-            audio.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/audioOff.png")).toExternalForm()));
-            volume = 0;
+            if (mediaPlayer.isMute()) {
+                mediaPlayer.setMute(false);
+                audio.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/audioOn.png")).toExternalForm()));
+                mediaPlayer.setVolume(volumeSelector.getValue());
+                volume = volumeSelector.getValue();
+            } else {
+                mediaPlayer.setMute(true);
+                audio.setImage(new Image(Objects.requireNonNull(getClass().getResource("/image/audioOff.png")).toExternalForm()));
+                volume = 0;
+            }
         }
     }
 
     @FXML
-    private void open(MouseEvent mouseEvent) {
+    private void open() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("MP3", "*.mp3"),
                 new FileChooser.ExtensionFilter("MP4", "*.mp4"),
                 new FileChooser.ExtensionFilter("All Files", "*.*"));
-        List<File> file = fileChooser.showOpenMultipleDialog(Utils.currentStage(mouseEvent));
+
+        Stage stage = (Stage) telaAPP.getScene().getWindow();
+        List<File> file = fileChooser.showOpenMultipleDialog(stage);
 
         if (file != null) {
 
@@ -252,14 +304,18 @@ public class MainController implements Initializable {
                 stop();
                 musics.clear();
             }
+            control = 0;
             musics.addAll(file);
             uploadMusic();
             changeVolume();
             player();
+
         }
     }
 
     public void reload() {
         txtReload.setVisible(!txtReload.isVisible());
+        labelCounterReload.setVisible(!labelCounterReload.isVisible());
+        imgGifReload.setVisible(!imgGifReload.isVisible());
     }
 }

@@ -16,7 +16,7 @@
 
 <AnchorPane fx:id="telaAPP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="325.0" prefWidth="380.0" style="-fx-background-color: rgb(53,53,53);" styleClass="AnchorPane"
-            xmlns="http://javafx.com/javafx/21.0.4" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.MainController">
     <children>
         <Text fill="WHITE" layoutX="341.0" layoutY="27.0" onMouseClicked="#minimize" strokeType="OUTSIDE"
@@ -31,8 +31,8 @@
                 <Font name="System Bold" size="24.0"/>
             </font>
         </Text>
-        <ImageView fitHeight="130.0" fitWidth="110.0" layoutX="135.0" layoutY="22.0" onMouseClicked="#open"
-                   pickOnBounds="true" preserveRatio="true" styleClass="imageViewButton">
+        <ImageView fx:id="btnOpen" fitHeight="130.0" fitWidth="110.0" layoutX="135.0" layoutY="22.0"
+                   onMouseClicked="#open" pickOnBounds="true" preserveRatio="true" styleClass="imageViewButton">
             <image>
                 <Image url="@../image/simboloMusical.png"/>
             </image>
@@ -40,8 +40,8 @@
         <HBox alignment="BOTTOM_LEFT" layoutX="14.0" layoutY="260.0" prefHeight="42.0" prefWidth="192.0" spacing="1.0"
               AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="14.0">
             <children>
-                <ImageView fitHeight="27.0" fitWidth="30.0" onMouseClicked="#preview" pickOnBounds="true"
-                           preserveRatio="true" styleClass="imageViewButton">
+                <ImageView fx:id="btnPreview" fitHeight="27.0" fitWidth="30.0" onMouseClicked="#preview"
+                           pickOnBounds="true" preserveRatio="true" styleClass="imageViewButton">
                     <image>
                         <Image url="@../image/anterior.png"/>
                     </image>
@@ -55,20 +55,20 @@
                         <Insets/>
                     </HBox.margin>
                 </ImageView>
-                <ImageView fitHeight="27.0" fitWidth="30.0" onMouseClicked="#stop" pickOnBounds="true"
+                <ImageView fx:id="btnStop" fitHeight="27.0" fitWidth="30.0" onMouseClicked="#stop" pickOnBounds="true"
                            preserveRatio="true" styleClass="imageViewButton">
                     <image>
                         <Image url="@../image/stop.png"/>
                     </image>
                 </ImageView>
-                <ImageView fitHeight="27.0" fitWidth="30.0" onMouseClicked="#next" pickOnBounds="true"
+                <ImageView fx:id="btnNext" fitHeight="27.0" fitWidth="30.0" onMouseClicked="#next" pickOnBounds="true"
                            preserveRatio="true" styleClass="imageViewButton">
                     <image>
                         <Image url="@../image/proxima.png"/>
                     </image>
                 </ImageView>
-                <ImageView fitHeight="27.0" fitWidth="30.0" onMouseClicked="#reload" pickOnBounds="true"
-                           preserveRatio="true" styleClass="imageViewButton">
+                <ImageView fx:id="btnReload" fitHeight="27.0" fitWidth="30.0" onMouseClicked="#reload"
+                           pickOnBounds="true" preserveRatio="true" styleClass="imageViewButton">
                     <image>
                         <Image url="@../image/reload.png"/>
                     </image>
@@ -120,6 +120,17 @@
             </content>
         </ScrollPane>
         <MediaView fx:id="mediaView" fitHeight="2.0" fitWidth="2.0" layoutX="14.0" layoutY="13.0"/>
+        <HBox alignment="CENTER" layoutX="89.0" layoutY="225.0" prefHeight="26.0" prefWidth="200.0" spacing="10.0">
+            <children>
+                <Label fx:id="labelCounterReload" text="0 Reload" textFill="#fffdfd" visible="false"/>
+                <ImageView fx:id="imgGifReload" fitHeight="21.0" fitWidth="24.0" pickOnBounds="true"
+                           preserveRatio="true" visible="false">
+                    <image>
+                        <Image url="@../image/gifReload.gif"/>
+                    </image>
+                </ImageView>
+            </children>
+        </HBox>
     </children>
     <cursor>
         <Cursor fx:constant="DEFAULT"/>
